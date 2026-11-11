@@ -85,3 +85,4 @@ Internal ticket validation used by the point-of-sale terminal.
 * **Method:** `POST`
 * **Content-Type:** `application/json`
 * **Access Control:** Operator or Admin role required via session.
+

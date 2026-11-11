@@ -53,3 +53,4 @@ graph TD
 * **Upload Hardening:** `secure_upload_image()` verifies real file signatures via PHP `finfo` (MIME whitelist) and writes cryptographically randomized filenames (`time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext`).
 * **API Guard:** API endpoints mandate either an active authenticated session (Role: `operator`/`admin`) or a valid `Authorization: Bearer <API_SECRET_KEY>`.
 * **Zero-Leak Policy:** Database passwords and API keys are strictly confined to `.env` and kept out of Git versioning.
+

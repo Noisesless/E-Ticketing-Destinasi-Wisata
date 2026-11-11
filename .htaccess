@@ -1,0 +1,22 @@
+# Apache Security Configuration (Defense-in-Depth)
+# Hollynice Ticket System - Banjarnegara
+
+# Disable directory browsing
+Options -Indexes
+
+# Block access to hidden, environment, and configuration files
+<FilesMatch "^\.env|\.git|\.md$|composer\.(json|lock)$|package(-lock)?\.json$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Allow,Deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Block access to documentation folder from web root
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^\.docs/ - [F,L]
+</IfModule>

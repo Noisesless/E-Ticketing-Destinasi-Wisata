@@ -18,9 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo->beginTransaction();
 
+        $allowedMethods = ['qris', 'va_bri', 'va_bni', 'va_mandiri', 'va_bca', 'va_bank_jateng'];
         $paymentMethod = $_POST['payment_method'] ?? 'qris';
         if ($paymentMethod === 'va' && isset($_POST['va_bank'])) {
-            $paymentMethod = 'va_' . $_POST['va_bank'];
+            $paymentMethod = 'va_' . sanitize_string($_POST['va_bank']);
+        }
+        if (!in_array($paymentMethod, $allowedMethods, true)) {
+            $paymentMethod = 'qris';
         }
 
         // 1. Create Order

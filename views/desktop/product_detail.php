@@ -416,6 +416,7 @@
                     </div>
 
                     <form method="POST" class="space-y-4">
+                        <?= csrf_field() ?>
                         <?php if($variants): ?>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1"><?= trans('Ticket Category', 'Kategori Tiket') ?></label>

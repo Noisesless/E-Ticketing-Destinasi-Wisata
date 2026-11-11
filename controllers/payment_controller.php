@@ -3,7 +3,7 @@ if (!isLoggedIn()) {
     redirect('index.php?page=login');
 }
 
-$orderId = $_GET['id'] ?? null;
+$orderId = validate_int($_GET['id'] ?? null);
 if (!$orderId) {
     redirect('index.php');
 }
@@ -14,7 +14,7 @@ $stmt->execute([$orderId, $_SESSION['user_id']]);
 $order = $stmt->fetch();
 
 if (!$order) {
-    die("Order not found or access denied.");
+    redirect('index.php?page=cart');
 }
 
 $action = $_GET['action'] ?? 'view';

@@ -36,3 +36,4 @@
 * **Idempotent Data Management:** Database setup consolidated in `setup.php`.
 * **Zero Secret Leakage:** Checked repository and verified no credentials or sensitive tokens committed.
 * **Separation of Concerns:** Business logic preserved within controllers; views focused purely on markup and presentation.
+

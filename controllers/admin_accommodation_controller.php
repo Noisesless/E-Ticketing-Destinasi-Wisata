@@ -59,10 +59,12 @@ switch ($action) {
         break;
 
     case 'edit':
-        $id = $_GET['id'];
+        $id = validate_int($_GET['id'] ?? null);
+        if (!$id) redirect('index.php?page=admin_accommodation');
         $stmt = $pdo->prepare("SELECT * FROM accommodations WHERE id = ?");
         $stmt->execute([$id]);
         $accommodation = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$accommodation) redirect('index.php?page=admin_accommodation');
         $isEdit = true;
         require 'views/admin/accommodation_form.php';
         break;
@@ -102,9 +104,11 @@ switch ($action) {
 
     case 'delete':
         verify_csrf_token($_GET['_csrf_token'] ?? '');
-        $id = $_GET['id'];
-        $stmt = $pdo->prepare("DELETE FROM accommodations WHERE id = ?");
-        $stmt->execute([$id]);
+        $id = validate_int($_GET['id'] ?? null);
+        if ($id) {
+            $stmt = $pdo->prepare("DELETE FROM accommodations WHERE id = ?");
+            $stmt->execute([$id]);
+        }
         redirect('index.php?page=admin_accommodation');
         break;
 }

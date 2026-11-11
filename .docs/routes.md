@@ -55,3 +55,4 @@ All client requests route through `index.php?page=<route>`.
 | `how_to_buy` | `views/desktop/how_to_buy.php` | Step-by-step visitor booking guide |
 | `disclaimer` | `views/desktop/disclaimer.php` | Legal terms and development notices |
 | `privacy_policy` | `views/desktop/privacy_policy.php` | Data handling and visitor privacy statement |
+

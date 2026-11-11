@@ -90,3 +90,4 @@ graph TD
 | **QRCode.js** | 1.0.0 CDN | Client-side QR generation for customer e-tickets |
 | **Chart.js** | CDN Latest | Graphical visualization for Admin & Dinas Monitoring dashboards |
 | **Leaflet.js** | OpenStreetMap / GeoJSON | Geographic visualization of Banjarnegara destinations and village borders |
+

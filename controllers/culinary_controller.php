@@ -3,7 +3,10 @@ require_once 'config/db.php';
 
 // Check if detail view is requested
 if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+    $id = validate_int($_GET['id']);
+    if (!$id) {
+        redirect('index.php?page=culinary');
+    }
     $stmt = $pdo->prepare("SELECT * FROM culinary_spots WHERE id = ?");
     $stmt->execute([$id]);
     $culinary = $stmt->fetch(PDO::FETCH_ASSOC);

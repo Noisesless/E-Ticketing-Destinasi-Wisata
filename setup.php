@@ -116,6 +116,8 @@ try {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE CASCADE
     )");
+    // Ensure ENUM column includes pending_payment for existing installations
+    $pdo->exec("ALTER TABLE tickets MODIFY COLUMN status ENUM('valid', 'used', 'expired', 'pending_payment') DEFAULT 'pending_payment'");
     echo "[✓] Table 'tickets' verified." . PHP_EOL;
 
     // 7. Accommodations Table
@@ -195,3 +197,4 @@ try {
 } catch (PDOException $e) {
     die("Database Setup Failed: " . $e->getMessage() . PHP_EOL);
 }
+

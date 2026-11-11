@@ -209,3 +209,4 @@ Travel services, car rentals, and local pickup services.
 * `capacity` INT DEFAULT 4
 * `price_range` VARCHAR(100)
 * `contact_number` VARCHAR(50)
+

@@ -41,6 +41,16 @@ function env($key, $default = null) {
 // Automatically load .env once
 load_env();
 
+// Environment-aware Error Handling (Anti-Information Disclosure)
+if (env('APP_ENV') === 'production') {
+    ini_set('display_errors', '0');
+    ini_set('display_startup_errors', '0');
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+} else {
+    ini_set('display_errors', '1');
+    error_reporting(E_ALL);
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     $current_save_path = session_save_path();
     if (empty($current_save_path) || !is_dir($current_save_path)) {
@@ -50,7 +60,24 @@ if (session_status() === PHP_SESSION_NONE) {
             session_save_path(sys_get_temp_dir());
         }
     }
+    // Hardened Session Cookie Parameters (Anti-Hijacking / Anti-XSS)
+    ini_set('session.cookie_httponly', '1');
+    ini_set('session.use_only_cookies', '1');
+    ini_set('session.cookie_samesite', 'Lax');
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        ini_set('session.cookie_secure', '1');
+    }
     session_start();
+}
+
+// Input Validation & Sanitization Helpers
+function validate_int($value, $default = null) {
+    $val = filter_var($value, FILTER_VALIDATE_INT);
+    return $val !== false ? $val : $default;
+}
+
+function sanitize_string($value) {
+    return trim(strip_tags((string)($value ?? '')));
 }
 
 // XSS Escaper Helper

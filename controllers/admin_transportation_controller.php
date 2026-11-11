@@ -15,13 +15,12 @@ $success = '';
 
 if ($action == 'delete' && isset($_GET['id'])) {
     verify_csrf_token($_GET['_csrf_token'] ?? '');
-    $id = $_GET['id'];
-    $stmt = $pdo->prepare("DELETE FROM transportations WHERE id = ?");
-    if ($stmt->execute([$id])) {
-        redirect('index.php?page=admin_transportation&msg=deleted');
-    } else {
-        $error = "Gagal menghapus data.";
+    $id = validate_int($_GET['id']);
+    if ($id) {
+        $stmt = $pdo->prepare("DELETE FROM transportations WHERE id = ?");
+        $stmt->execute([$id]);
     }
+    redirect('index.php?page=admin_transportation&msg=deleted');
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -72,8 +71,8 @@ if ($action == 'list') {
     require 'views/admin/transportation_form.php';
 
 } elseif ($action == 'edit') {
-    if (isset($_GET['id'])) {
-        $id = $_GET['id'];
+    $id = validate_int($_GET['id'] ?? null);
+    if ($id) {
         $stmt = $pdo->prepare("SELECT * FROM transportations WHERE id = ?");
         $stmt->execute([$id]);
         $transportation = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -83,6 +82,8 @@ if ($action == 'list') {
         }
         require 'views/admin/transportation_form.php';
     } else {
+        redirect('index.php?page=admin_transportation');
+    }
         redirect('index.php?page=admin_transportation');
     }
 }

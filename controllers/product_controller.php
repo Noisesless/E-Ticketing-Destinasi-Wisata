@@ -1,5 +1,5 @@
 <?php
-$id = $_GET['id'] ?? null;
+$id = validate_int($_GET['id'] ?? null);
 
 if (!$id) {
     redirect('index.php');
@@ -21,6 +21,7 @@ $gallery = $stmtImg->fetchAll();
 
 // Check if adding to cart
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
+    verify_csrf();
     if (!isLoggedIn()) {
         redirect('index.php?page=login');
     }
@@ -30,8 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         $_SESSION['cart'] = [];
     }
     
-    $qty = (int)$_POST['quantity'];
-    $date = $_POST['visit_date'];
+    $qty = max(1, min(100, (int)($_POST['quantity'] ?? 1)));
+    $rawDate = $_POST['visit_date'] ?? '';
+    $date = (preg_match('/^\d{4}-\d{2}-\d{2}$/', $rawDate) && $rawDate >= date('Y-m-d')) ? $rawDate : date('Y-m-d');
     
     // Add to cart array
     $_SESSION['cart'][] = [

@@ -53,3 +53,4 @@
 | **ISS-007** | Automated Image Thumbnail Generation on Upload | Low | Future Enhancement |
 | **ISS-008** | Real Payment Gateway Integration (Midtrans / Xendit) | Medium | Post-Launch |
 | **ISS-009** | Export Sales Reports to PDF / Excel for Dinas | Low | Operational Feature |
+

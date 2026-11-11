@@ -169,6 +169,7 @@
 
         <!-- Booking Form -->
         <form method="POST" class="mt-8 pb-32">
+            <?= csrf_field() ?>
             <div class="bg-white p-4 rounded-xl shadow-sm space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase"><?= trans('Visit Date', 'Tanggal Kunjungan') ?></label>

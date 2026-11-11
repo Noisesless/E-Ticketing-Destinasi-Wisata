@@ -3,11 +3,10 @@ require_once 'config/db.php';
 require_once 'includes/functions.php';
 
 // Check if ID is provided
-if (!isset($_GET['id'])) {
+$id = validate_int($_GET['id'] ?? null);
+if (!$id) {
     redirect('index.php?page=transportation');
 }
-
-$id = $_GET['id'];
 
 // Fetch Detail
 $stmt = $pdo->prepare("SELECT * FROM transportations WHERE id = ?");

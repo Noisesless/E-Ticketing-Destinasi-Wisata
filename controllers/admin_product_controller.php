@@ -4,7 +4,7 @@ if (!isAdmin()) {
 }
 
 $action = $_GET['action'] ?? 'list';
-$id = $_GET['id'] ?? null;
+$id = validate_int($_GET['id'] ?? null);
 
 // Handle Image Upload (Secured with whitelist & MIME check)
 function uploadImage($file) {
