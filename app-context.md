@@ -32,3 +32,4 @@
   - `architecture.md`, `api-spec.md`, `database.md`, `routes.md`, `dependency-graph.md`, `issues.md`, `quality_review.md`, `deployment-guide.md`, `security-audit.md`
 - Public-safe `README.md` synchronized.
 - Git repository tracking active.
+- Admin Panel: POS Scanner (`page=operator`) integrated cleanly into `admin_layout.php` with sidebar, active tab indicator, and manual code input.
