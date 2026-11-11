@@ -1,5 +1,5 @@
 # Dependency Graph & Component Topology
-**Project:** Hollynice Ticket System - Banjarnegara  
+**Project:** Hollynice Ticket System - Geopark Wonosobo  
 **Updated:** 2026-11-11  
 
 ---
@@ -89,5 +89,7 @@ graph TD
 | **FontAwesome** | 6.0.0 CDN | Uniform iconography throughout user and administration interfaces |
 | **QRCode.js** | 1.0.0 CDN | Client-side QR generation for customer e-tickets |
 | **Chart.js** | CDN Latest | Graphical visualization for Admin & Dinas Monitoring dashboards |
-| **Leaflet.js** | OpenStreetMap / GeoJSON | Geographic visualization of Banjarnegara destinations and village borders |
+| **OpenLayers** | v8.2.0 CDN | Interactive GIS mapping of Wonosobo Geopark geosites & boundary layers |
+| **HTML5-QRCode** | Latest CDN | Camera QR scanner integrated into admin POS validation |
+| **TCPDF** | v6.10.1 Bundled | Server-side PDF generation engine for official BPPKAD PAD monitoring reports |
 

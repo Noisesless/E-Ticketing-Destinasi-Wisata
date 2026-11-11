@@ -1,5 +1,5 @@
 # Application Routes & Controller Map
-**Project:** Hollynice Ticket System - Banjarnegara  
+**Project:** Hollynice Ticket System - Geopark Wonosobo  
 **Router:** [`index.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/index.php)  
 **Updated:** 2026-11-11  
 
@@ -19,8 +19,8 @@ All client requests route through `index.php?page=<route>`.
 | `souvenir` | [`controllers/souvenir_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/souvenir_controller.php) | Public | Oleh-oleh & souvenirs catalog with WhatsApp CTA |
 | `transportation` | [`controllers/transportation_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/transportation_controller.php) | Public | Travel, rental, and pickup transportation directory |
 | `transportation_detail` | [`controllers/transportation_detail_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/transportation_detail_controller.php) | Public | Detailed specifications of transport service |
-| `map` | [`controllers/map_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/map_controller.php) | Public | Interactive Leaflet GIS map with GeoJSON village borders |
-| `destination_detail` | [`controllers/destination_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/destination_controller.php) | Public | Detailed destination guide (Kawah Sikidang, Candi Arjuna) |
+| `map` | [`controllers/map_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/map_controller.php) | Public | Interactive OpenLayers GIS map with multi-category pins & GeoJSON boundaries |
+| `destination` | [`controllers/destination_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/destination_controller.php) | Public | Detailed Geopark geosite guide with coordinates (13 sites) |
 | `cart` | [`controllers/cart_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/cart_controller.php) | Logged In | User shopping cart and ticket date selector |
 | `checkout` | [`controllers/checkout_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/checkout_controller.php) | Logged In | Order creation and payment method selection (CSRF protected) |
 | `payment` | [`controllers/payment_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/payment_controller.php) | Logged In | Payment simulation (QRIS / Bank Jateng VA) |
@@ -43,7 +43,7 @@ All client requests route through `index.php?page=<route>`.
 | `admin_transportation`| [`controllers/admin_transportation_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/admin_transportation_controller.php) | `admin` | Transport services CRUD with secure image upload |
 | `operator` | `views/admin/pos.php` | `operator` / `admin` | Operator POS terminal and live QR ticket validator |
 | `ticket` | [`controllers/ticket_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/ticket_controller.php) | `operator` / `admin` | POS ticket validation endpoint (JSON) |
-| `monitor` | [`controllers/monitor_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/monitor_controller.php) | `monitor` / `admin` | Dinas Pariwisata revenue monitoring dashboard |
+| `monitor` | [`controllers/monitor_controller.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/monitor_controller.php) | `monitor` / `admin` | BPPKAD Wonosobo PAD monitoring, bank sync & TCPDF report export |
 
 ---
 
