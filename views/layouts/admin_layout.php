@@ -29,6 +29,7 @@
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -74,7 +75,7 @@
                     <i class="fas fa-bus w-6 mr-2 text-center"></i>
                     Manajemen Transportasi
                 </a>
-                <a href="index.php?page=operator" class="flex items-center px-3 py-2 text-sm font-medium rounded-md group hover:bg-gray-50 hover:text-teal-600">
+                <a href="index.php?page=operator" class="flex items-center px-3 py-2 text-sm font-medium rounded-md group hover:bg-gray-50 hover:text-teal-600 <?= $page === 'operator' ? 'sidebar-active' : 'text-gray-700' ?>">
                     <i class="fas fa-qrcode w-6 mr-2 text-center"></i>
                     POS Scanner
                 </a>
