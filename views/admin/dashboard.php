@@ -14,21 +14,78 @@ for ($i = 6; $i >= 0; $i--) {
     $revenues[] = $dailyRev;
 }
 
-// Chart Data: Ticket Types
-$ticketTypes = $pdo->query("
-    SELECT p.type, count(t.id) as count 
-    FROM tickets t 
-    JOIN order_items oi ON t.order_item_id = oi.id 
-    JOIN products p ON oi.product_id = p.id 
-    GROUP BY p.type
-")->fetchAll(PDO::FETCH_KEY_PAIR);
-
-$typeLabels = ['tour' => 'Paket Wisata', 'event' => 'Acara', 'entrance' => 'Tiket Masuk'];
 $chartTypeLabels = [];
 $chartTypeData = [];
-foreach ($ticketTypes as $type => $count) {
-    $chartTypeLabels[] = $typeLabels[$type] ?? $type;
-    $chartTypeData[] = $count;
+
+$pdo->exec("
+    CREATE TABLE IF NOT EXISTS pos_transaction_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        ticket_id INT NULL,
+        order_id INT NULL,
+        pos_code VARCHAR(100),
+        payment_category ENUM('online','offline') NOT NULL,
+        amount DECIMAL(15,2) NOT NULL,
+        entry_type VARCHAR(20),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+");
+
+$posUnits = [
+    ['code' => 'POS-001 - Gerbang Utama', 'label' => 'POS Unit 1 - Gerbang Utama'],
+    ['code' => 'POS-002 - Gerbang Timur', 'label' => 'POS Unit 2 - Gerbang Timur'],
+    ['code' => 'POS-003 - Gerbang Barat', 'label' => 'POS Unit 3 - Gerbang Barat'],
+    ['code' => 'POS-004 - Gerbang Selatan', 'label' => 'POS Unit 4 - Gerbang Selatan'],
+    ['code' => 'POS-005 - Gerbang Utara', 'label' => 'POS Unit 5 - Gerbang Utara'],
+];
+
+$stmtPos = $pdo->query("
+    SELECT 
+        pos_code,
+        payment_category,
+        SUM(amount) AS total_amount,
+        COUNT(id) AS total_entries
+    FROM pos_transaction_logs
+    WHERE DATE(created_at) = CURDATE()
+    GROUP BY pos_code, payment_category
+");
+$posRows = $stmtPos->fetchAll(PDO::FETCH_ASSOC);
+
+$posStatus = [];
+foreach ($posRows as $row) {
+    $code = $row['pos_code'] ?? '';
+    if ($code === '') {
+        continue;
+    }
+    if (!isset($posStatus[$code])) {
+        $posStatus[$code] = [
+            'online_amount' => 0,
+            'online_entries' => 0,
+            'offline_amount' => 0,
+            'offline_entries' => 0,
+        ];
+    }
+    $category = $row['payment_category'] ?? 'offline';
+    if ($category === 'online') {
+        $posStatus[$code]['online_amount'] += (float)($row['total_amount'] ?? 0);
+        $posStatus[$code]['online_entries'] += (int)($row['total_entries'] ?? 0);
+    } else {
+        $posStatus[$code]['offline_amount'] += (float)($row['total_amount'] ?? 0);
+        $posStatus[$code]['offline_entries'] += (int)($row['total_entries'] ?? 0);
+    }
+}
+
+foreach ($posUnits as $unit) {
+    $code = $unit['code'];
+    $label = $unit['label'];
+    $stats = $posStatus[$code] ?? [
+        'online_amount' => 0,
+        'online_entries' => 0,
+        'offline_amount' => 0,
+        'offline_entries' => 0,
+    ];
+    $totalEntries = $stats['online_entries'] + $stats['offline_entries'];
+    $chartTypeLabels[] = $label;
+    $chartTypeData[] = $totalEntries;
 }
 
 // Determine if we are inside the layout or need to load it
@@ -39,113 +96,210 @@ if (!isset($content)) {
 }
 ?>
 
+<div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div>
+        <div class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium uppercase tracking-wide">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+            Panel Kendali Penjualan Tiket
+        </div>
+        <h1 class="mt-3 text-2xl md:text-3xl font-semibold text-slate-900">Dasbor Admin E-Tiket</h1>
+        <p class="mt-1 text-sm text-slate-500">Ringkasan transaksi, tiket terjual, dan aktivitas terbaru sistem e-ticketing.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2 text-xs text-slate-500 bg-white/60 border border-slate-200 rounded-full px-3 py-1 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Sistem Aktif
+        </div>
+        <a href="index.php?page=monitor" class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-slate-900 text-slate-50 hover:bg-slate-800 shadow-sm">
+            <i class="fas fa-chart-line mr-2 text-emerald-300"></i>
+            Buka Dashboard Monitoring Dinas
+        </a>
+    </div>
+</div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+    <div class="bg-white/80 backdrop-blur rounded-2xl shadow-sm p-6 border border-emerald-100">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-gray-500">Total Pendapatan</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1"><?= formatRupiah($revenue) ?></h3>
+                <p class="text-xs font-semibold text-emerald-600 tracking-wide uppercase">Total Pendapatan</p>
+                <h3 class="text-2xl md:text-3xl font-semibold text-slate-900 mt-2"><?= formatRupiah($revenue) ?></h3>
             </div>
-            <div class="p-2 bg-teal-50 rounded-lg text-teal-600">
-                <i class="fas fa-wallet text-xl"></i>
+            <div class="p-2.5 bg-emerald-50 rounded-xl text-emerald-600 shadow-sm">
+                <i class="fas fa-coins text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 text-sm text-green-600 flex items-center">
-            <i class="fas fa-arrow-up mr-1"></i>
-            <span>Update Realtime</span>
+        <div class="mt-4 flex items-center justify-between text-xs">
+            <div class="flex items-center text-emerald-700">
+                <i class="fas fa-circle mr-1 text-[8px]"></i>
+                <span>Transaksi berstatus dibayar</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">Realtime</span>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+    <div class="bg-white/80 backdrop-blur rounded-2xl shadow-sm p-6 border border-slate-100">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-gray-500">Tiket Terjual</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1"><?= number_format($ticketsSold) ?></h3>
+                <p class="text-xs font-semibold text-sky-600 tracking-wide uppercase">Tiket Terjual</p>
+                <h3 class="text-2xl md:text-3xl font-semibold text-slate-900 mt-2"><?= number_format($ticketsSold) ?></h3>
             </div>
-            <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+            <div class="p-2.5 bg-sky-50 rounded-xl text-sky-600 shadow-sm">
                 <i class="fas fa-ticket-alt text-xl"></i>
             </div>
         </div>
-        <div class="mt-4 text-sm text-gray-500">
-            Total tiket valid
+        <div class="mt-4 text-xs text-slate-500 flex items-center justify-between">
+            <span>Total tiket valid dan digunakan.</span>
+            <span class="px-2 py-0.5 rounded-full bg-slate-50 text-slate-600 border border-slate-200">Semua kanal</span>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+    <div class="bg-white/80 backdrop-blur rounded-2xl shadow-sm p-6 border border-slate-100">
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-sm font-medium text-gray-500">Total Pesanan</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-1"><?= number_format($totalOrders) ?></h3>
+                <p class="text-xs font-semibold text-indigo-600 tracking-wide uppercase">Total Pesanan</p>
+                <h3 class="text-2xl md:text-3xl font-semibold text-slate-900 mt-2"><?= number_format($totalOrders) ?></h3>
             </div>
-            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                <i class="fas fa-shopping-cart text-xl"></i>
+            <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 shadow-sm">
+                <i class="fas fa-receipt text-xl"></i>
             </div>
         </div>
-         <div class="mt-4 text-sm text-gray-500">
-            Semua status
+        <div class="mt-4 text-xs text-slate-500 flex items-center justify-between">
+            <span>Termasuk pesanan online dan loket.</span>
+            <span class="px-2 py-0.5 rounded-full bg-slate-50 text-slate-600 border border-slate-200">Database</span>
         </div>
     </div>
 </div>
 
-<!-- Charts Section -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-    <!-- Revenue Chart -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Tren Pendapatan (7 Hari Terakhir)</h3>
-        <canvas id="revenueChart" height="200"></canvas>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <div class="lg:col-span-2 bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 class="text-base font-semibold text-slate-900">Grafik Pendapatan 7 Hari Terakhir</h2>
+                <p class="text-xs text-slate-500">Pergerakan total nominal transaksi per hari.</p>
+            </div>
+        </div>
+        <div class="h-72">
+            <canvas id="revenueChart"></canvas>
+        </div>
     </div>
 
-    <!-- Ticket Type Chart -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h3 class="text-lg font-bold text-gray-900 mb-4">Distribusi Penjualan Tiket</h3>
-        <div class="h-64 flex justify-center">
-            <canvas id="typeChart"></canvas>
+    <div class="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col justify-between">
+        <div>
+            <h2 class="text-base font-semibold text-slate-900">Distribusi Tiket Masuk per POS</h2>
+            <p class="text-xs text-slate-500 mb-4">Perbandingan jumlah tiket yang divalidasi tiap pos loket hari ini.</p>
+            <div class="h-60 relative flex items-center justify-center">
+                <canvas id="typeChart"></canvas>
+            </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-1">
+            <div class="flex justify-between items-center">
+                <span>Total POS Terhubung</span>
+                <span class="font-medium text-slate-700"><?= count($posUnits) ?> Loket</span>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Recent Orders Table -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-        <h3 class="text-lg font-bold text-gray-900">Pesanan Terbaru</h3>
-        <a href="#" class="text-sm text-teal-600 hover:text-teal-700 font-medium">Lihat Semua</a>
+<div class="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100 p-6 mb-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+        <div>
+            <h2 class="text-base font-semibold text-slate-900">Monitoring Status POS Loket Hari Ini</h2>
+            <p class="text-xs text-slate-500">Pemantauan transaksi online dan offline pada masing-masing pintu masuk.</p>
+        </div>
+        <span class="self-start md:self-auto text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+            <?= date('d M Y') ?>
+        </span>
     </div>
     <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
-                    <th class="px-6 py-3 font-medium">ID Pesanan</th>
-                    <th class="px-6 py-3 font-medium">Pelanggan</th>
-                    <th class="px-6 py-3 font-medium">Total</th>
-                    <th class="px-6 py-3 font-medium">Status</th>
-                    <th class="px-6 py-3 font-medium">Tanggal</th>
+        <table class="min-w-full text-xs text-left">
+            <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider">
+                <tr>
+                    <th class="px-4 py-3">Nama POS Unit</th>
+                    <th class="px-4 py-3">Status Sinkronisasi</th>
+                    <th class="px-4 py-3 text-right">Tiket Online</th>
+                    <th class="px-4 py-3 text-right">Nominal Online</th>
+                    <th class="px-4 py-3 text-right">Tiket Offline</th>
+                    <th class="px-4 py-3 text-right">Nominal Offline</th>
+                    <th class="px-4 py-3 text-right">Total Tiket</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
-                <?php
-                $orders = $pdo->query("SELECT o.*, u.username FROM orders o JOIN users u ON o.user_id = u.id ORDER BY created_at DESC LIMIT 5")->fetchAll();
-                foreach ($orders as $order):
-                    $statusColors = [
-                        'paid' => 'bg-green-50 text-green-700 border-green-200',
-                        'pending' => 'bg-yellow-50 text-yellow-700 border-yellow-200',
-                        'cancelled' => 'bg-red-50 text-red-700 border-red-200'
+            <tbody class="divide-y divide-slate-100">
+                <?php foreach ($posUnits as $unit): ?>
+                    <?php
+                    $code = $unit['code'];
+                    $label = $unit['label'];
+                    $stats = $posStatus[$code] ?? [
+                        'online_amount' => 0,
+                        'online_entries' => 0,
+                        'offline_amount' => 0,
+                        'offline_entries' => 0,
                     ];
-                    $statusLabel = [
-                        'paid' => 'Dibayar',
-                        'pending' => 'Menunggu',
-                        'cancelled' => 'Dibatalkan'
-                    ];
+                    $totalEntries = $stats['online_entries'] + $stats['offline_entries'];
+                    $isActive = $totalEntries > 0;
+                    ?>
+                    <tr>
+                        <td class="px-4 py-3 font-medium text-slate-800 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full <?= $isActive ? 'bg-emerald-500' : 'bg-slate-300' ?>"></span>
+                            <span><?= htmlspecialchars($label) ?></span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase <?= $isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' ?>">
+                                <?= $isActive ? 'Online Aktif' : 'Standby' ?>
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-right text-slate-600"><?= number_format($stats['online_entries']) ?></td>
+                        <td class="px-4 py-3 text-right text-slate-600"><?= formatRupiah($stats['online_amount']) ?></td>
+                        <td class="px-4 py-3 text-right text-slate-600"><?= number_format($stats['offline_entries']) ?></td>
+                        <td class="px-4 py-3 text-right text-slate-600"><?= formatRupiah($stats['offline_amount']) ?></td>
+                        <td class="px-4 py-3 text-right font-semibold text-slate-800"><?= number_format($totalEntries) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="bg-white/80 backdrop-blur rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div>
+            <h2 class="text-base font-semibold text-slate-900">Pesanan Terbaru</h2>
+            <p class="text-xs text-slate-500">Daftar transaksi paling mutakhir yang masuk ke sistem.</p>
+        </div>
+        <span class="text-xs text-slate-400">10 Transaksi Terakhir</span>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-100 text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider">
+                <tr>
+                    <th class="px-6 py-3 font-semibold">ID Pesanan</th>
+                    <th class="px-6 py-3 font-semibold">Pelanggan</th>
+                    <th class="px-6 py-3 font-semibold">Total</th>
+                    <th class="px-6 py-3 font-semibold">Status</th>
+                    <th class="px-6 py-3 font-semibold">Tanggal</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-slate-100">
+                <?php 
+                $recentOrders = $pdo->query("
+                    SELECT o.*, u.full_name 
+                    FROM orders o 
+                    JOIN users u ON o.user_id = u.id 
+                    ORDER BY o.created_at DESC 
+                    LIMIT 10
+                ")->fetchAll(PDO::FETCH_ASSOC);
+                
+                foreach ($recentOrders as $order): 
                 ?>
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">#<?= $order['id'] ?></td>
-                    <td class="px-6 py-4 text-sm text-gray-600"><?= $order['username'] ?></td>
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900"><?= formatRupiah($order['total_amount']) ?></td>
-                    <td class="px-6 py-4">
-                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border <?= $statusColors[$order['status']] ?? 'bg-gray-100 text-gray-800' ?>">
-                            <?= $statusLabel[$order['status']] ?? $order['status'] ?>
+                <tr class="hover:bg-slate-50/60 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-900">#<?= htmlspecialchars($order['id']) ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-slate-600"><?= htmlspecialchars($order['full_name']) ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-slate-900 font-semibold"><?= formatRupiah($order['total_amount']) ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2.5 py-1 inline-flex text-[11px] leading-4 font-semibold rounded-full 
+                            <?= $order['status'] == 'paid' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' ?>">
+                            <?= ucfirst(htmlspecialchars($order['status'])) ?>
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500"><?= date('d M Y H:i', strtotime($order['created_at'])) ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-slate-400"><?= date('d M Y H:i', strtotime($order['created_at'])) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -155,33 +309,40 @@ if (!isset($content)) {
 
 <script>
     // Revenue Chart
-    const ctxRev = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctxRev, {
+    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctxRevenue, {
         type: 'line',
         data: {
             labels: <?= json_encode($dates) ?>,
             datasets: [{
-                label: 'Pendapatan',
+                label: 'Pendapatan (Rp)',
                 data: <?= json_encode($revenues) ?>,
-                borderColor: '#0d9488',
-                backgroundColor: 'rgba(13, 148, 136, 0.1)',
-                tension: 0.4,
-                fill: true
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.08)',
+                borderWidth: 2,
+                tension: 0.35,
+                fill: true,
+                pointBackgroundColor: '#059669',
+                pointRadius: 3
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: { display: false }
-            },
+            maintainAspectRatio: false,
             scales: {
-                y: { beginAtZero: true, grid: { display: false } },
-                x: { grid: { display: false } }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + (value / 1000).toLocaleString() + 'k';
+                        }
+                    }
+                }
             }
         }
     });
 
-    // Type Chart
+    // POS Type Chart
     const ctxType = document.getElementById('typeChart').getContext('2d');
     new Chart(ctxType, {
         type: 'doughnut',
@@ -189,7 +350,13 @@ if (!isset($content)) {
             labels: <?= json_encode($chartTypeLabels) ?>,
             datasets: [{
                 data: <?= json_encode($chartTypeData) ?>,
-                backgroundColor: ['#0d9488', '#f97316', '#3b82f6'],
+                backgroundColor: [
+                    '#059669',
+                    '#0284c7',
+                    '#6366f1',
+                    '#f59e0b',
+                    '#84cc16'
+                ],
                 borderWidth: 0
             }]
         },
@@ -197,7 +364,9 @@ if (!isset($content)) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'bottom' }
+                legend: {
+                    position: 'bottom'
+                }
             }
         }
     });

@@ -74,7 +74,7 @@
                             <?php endif; ?>
                             <div class="mt-2 flex items-center text-sm text-gray-500">
                                 <i class="fas fa-map-marker-alt mr-2 text-teal-500"></i>
-                                <span>Banjarnegara, Indonesia</span>
+                                <span>Wonosobo, Indonesia</span>
                                 <span class="mx-2">•</span>
                                 <i class="far fa-clock mr-2 text-teal-500"></i>
                                 <span>

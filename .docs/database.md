@@ -1,8 +1,8 @@
 # Database Architecture & Schema Specification
-**Project:** Hollynice Ticket System - Banjarnegara  
+**Project:** Hollynice Ticket System - Geopark Wonosobo  
 **Engine:** MySQL / MariaDB (InnoDB)  
 **Database Name:** `hollynice_ticket_db` (Configurable via `DB_NAME` in `.env`)  
-**Runner:** [`setup.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/setup.php)  
+**Runner:** [`setup.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/setup.php) / `dump_geopark.sql`  
 **Updated:** 2026-11-11  
 
 ---
@@ -209,4 +209,24 @@ Travel services, car rentals, and local pickup services.
 * `capacity` INT DEFAULT 4
 * `price_range` VARCHAR(100)
 * `contact_number` VARCHAR(50)
+
+### 2.11 `bank_sync_logs`
+Automated reconciliation logs with Bank Jateng for Regional Revenue (PAD).
+* `id` INT AUTO_INCREMENT PRIMARY KEY
+* `order_id` INT NULL (Foreign reference to `orders.id`)
+* `bank_name` VARCHAR(100) (e.g. Bank Jateng)
+* `synced_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+* `reference` VARCHAR(100) (Unique bank transaction reference)
+
+### 2.12 `pos_transaction_logs`
+Detailed gate entry and on-site POS terminal transaction reconciliation.
+* `id` INT AUTO_INCREMENT PRIMARY KEY
+* `ticket_id` INT NULL (Foreign reference to `tickets.id`)
+* `order_id` INT NULL
+* `pos_code` VARCHAR(100) (e.g. POS-001 - Gerbang Utama)
+* `payment_category` ENUM('online', 'offline') NOT NULL
+* `amount` DECIMAL(15,2) NOT NULL
+* `entry_type` VARCHAR(20)
+* `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+
 

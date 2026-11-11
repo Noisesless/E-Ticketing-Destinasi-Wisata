@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hollynice Ticket - Banjarnegara</title>
+    <title>E-Tiket Geopark Wonosobo</title>
     <link rel="manifest" href="manifest.json">
     <script>
         if ('serviceWorker' in navigator) {
@@ -61,7 +61,11 @@
             <!-- Logo Section -->
             <div class="flex items-center">
                 <a href="index.php" class="flex-shrink-0 flex items-center">
-                    <img src="img/logo.jpg" alt="Hollynice Logo" class="h-16 w-auto mr-2 rounded">
+                    <img src="img/logo.webp" alt="E-Tiket Wonosobo" class="h-14 w-auto mr-3 rounded">
+                    <div class="flex flex-col leading-tight">
+                        <span class="text-lg font-bold text-gray-900 font-heading">E-Tiket Wonosobo</span>
+                        <span class="text-xs text-teal-600 font-medium tracking-wide">Wisata Geopark</span>
+                    </div>
                 </a>
             </div>
 
@@ -71,10 +75,10 @@
                 <div class="hidden md:flex md:space-x-8 items-center mr-8">
                     <a href="index.php" class="text-gray-900 hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium"><?= trans('Home', 'Beranda') ?></a>
                     
-                    <!-- Tiket Wisata Banjarnegara -->
+                    <!-- Tiket Wisata Geopark Wonosobo -->
                     <div class="relative group">
                         <button class="text-gray-500 group-hover:text-teal-600 px-3 py-2 rounded-md text-sm font-medium inline-flex items-center outline-none">
-                            <span><?= trans('Banjarnegara Tourism Tickets', 'Tiket Wisata Banjarnegara') ?></span>
+                            <span><?= trans('Wonosobo Geopark Tickets', 'Tiket Geopark Wonosobo') ?></span>
                             <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>

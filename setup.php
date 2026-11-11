@@ -176,6 +176,29 @@ try {
     )");
     echo "[✓] Table 'transportations' verified." . PHP_EOL;
 
+    // 11. Bank Sync Logs Table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS bank_sync_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT NULL,
+        bank_name VARCHAR(100),
+        synced_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        reference VARCHAR(100)
+    )");
+    echo "[✓] Table 'bank_sync_logs' verified." . PHP_EOL;
+
+    // 12. POS Transaction Logs Table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS pos_transaction_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        ticket_id INT NULL,
+        order_id INT NULL,
+        pos_code VARCHAR(100),
+        payment_category ENUM('online','offline') NOT NULL,
+        amount DECIMAL(15,2) NOT NULL,
+        entry_type VARCHAR(20),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+    echo "[✓] Table 'pos_transaction_logs' verified." . PHP_EOL;
+
     // Seed default users if table is empty
     $userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
     if ($userCount == 0) {

@@ -15,15 +15,15 @@ require 'views/layouts/header.php';
 <!-- Hero Section -->
 <div class="relative bg-teal-700 h-[500px]">
     <div class="absolute inset-0">
-        <img class="w-full h-full object-cover" src="img/holly3.jpeg" alt="Banjarnegara">
+        <img class="w-full h-full object-cover" src="img/holly3.jpeg" alt="Geopark Wonosobo">
         <div class="absolute inset-0 bg-teal-900 mix-blend-multiply opacity-40" aria-hidden="true"></div>
     </div>
     <div class="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
         <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            <?= trans('Explore Banjarnegara Tourism', 'Jelajah Wisata Banjarnegara') ?>
+            <?= trans('E-Ticket Geopark Wonosobo', 'E-Tiket Geopark Wonosobo') ?>
         </h1>
         <p class="mt-6 text-xl text-teal-100 max-w-3xl">
-            <?= trans('Official e-ticketing platform for Banjarnegara tourism. Discover the beauty of Dieng Plateau, hidden waterfalls, and cultural events with Hollynice Bureau.', 'Platform e-ticketing resmi wisata Banjarnegara. Temukan keindahan Dataran Tinggi Dieng, air terjun tersembunyi, dan acara budaya bersama Biro Hollynice.') ?>
+            <?= trans('Official e-ticketing platform for Wonosobo Geopark tourism. Discover volcanic geosites, hidden waterfalls, and Dieng Plateau landscapes with Hollynice Bureau.', 'Platform e-ticketing resmi wisata Geopark Wonosobo. Temukan geosite vulkanik, air terjun tersembunyi, dan lanskap Dataran Tinggi Dieng bersama Biro Hollynice.') ?>
         </p>
         <div class="mt-10">
             <a href="#tours" class="inline-block bg-orange-500 border border-transparent rounded-md py-3 px-8 font-medium text-white hover:bg-orange-600 transition">
