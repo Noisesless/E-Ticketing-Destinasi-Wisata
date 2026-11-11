@@ -1,100 +1,132 @@
 # Hollynice Ticket System - Banjarnegara
 
-**Hollynice Ticket System** is a comprehensive E-Ticketing solution designed for tourism destinations in Banjarnegara. It supports tour packages, entrance tickets, and event bookings with a mobile-first approach for customers and robust management tools for administrators and operators.
+**Hollynice Ticket System** is an E-Ticketing and tourism promotion platform designed for destinations across Banjarnegara Regency, Central Java. Built on Native PHP with a modular MVC pattern and Tailwind CSS, it offers seamless mobile-first ticket booking for visitors alongside operational tools for operators, administrators, and regional tourism monitoring.
+
+---
 
 ## 🌟 Key Features
 
-### 📱 For Customers (Mobile-First)
-*   **Easy Booking**: Purchase tickets for tours, attractions, and events seamlessly.
-*   **E-Tickets**: Receive QR code tickets directly on the device.
-*   **Souvenir Shop**: Browse and order local souvenirs (Oleh-oleh) via WhatsApp integration.
-*   **Multi-language Support**: Toggle between Indonesian (ID) and English (EN).
-*   **PWA Support**: Installable as a web app for quick access.
+### 📱 For Tourists & Visitors (Mobile & Desktop)
+* **Ticket Catalog**: Book tour packages (Arung Jeram Serayu, Rafting), entrance tickets (Candi Arjuna, Kawah Sikidang, Desa Wisata Blambangan), and cultural events.
+* **E-Tickets & QR Codes**: Receive dynamic QR e-tickets on device for on-site scanning and redemption.
+* **Tourism Directory**: Explore verified Accommodations (Hotels, Homestays, Villas), Legendary Culinary spots (Dawet Ayu, Mie Ongklok), and Transportation services (Travel, Rental, Ojek Wisata).
+* **Souvenir Shop**: Browse local Banjarnegara handicrafts and delicacies with direct WhatsApp order integration.
+* **Interactive GIS Map**: Explore village borders and tourist destinations via Leaflet and GeoJSON maps.
+* **Bilingual Support**: Toggle between Indonesian (ID) and English (EN) at any time.
+* **Progressive Web App (PWA)**: Installable as an app with offline caching support via Service Workers.
 
-### 🛠 For Administrators
-*   **Dashboard**: Overview of sales and performance.
-*   **Product Management**: Create and edit tours, events, and entrance tickets with rich details (itinerary, facilities, etc.).
-*   **Sales Reports**: Track revenue and order history.
+### 🎟 For Operators & Loket
+* **Point of Sale (POS)**: Issue and print tickets directly at ticket counters.
+* **Ticket Scanner**: Validate visitor tickets in real-time using built-in camera scanning or barcode reader.
 
-### 🎟 For Operators
-*   **POS (Point of Sale)**: Sell tickets on-site.
-*   **Ticket Scanning**: Validate visitor tickets using QR code scanning.
+### 🛠 For Administrators & Dinas Pariwisata
+* **Admin Dashboard**: Comprehensive management of products, accommodation listings, culinary spots, transport providers, and souvenirs.
+* **Photo Galleries**: Multi-image management with secure upload validation.
+* **Regional Monitoring Dashboard**: Revenue and visitor volume monitoring designed for Dinas Pariwisata & DPPKAD.
+
+---
 
 ## 🚀 Technology Stack
 
-*   **Backend**: Native PHP (MVC Structure)
-*   **Database**: MySQL / MariaDB
-*   **Frontend**: HTML5, Tailwind CSS (via CDN), JavaScript
-*   **Icons**: FontAwesome
-*   **Other**: QRCode.js, Service Workers for PWA
+* **Backend**: Native PHP 8.1+ (Modular MVC Pattern)
+* **Database**: MySQL / MariaDB (PDO Prepared Statements)
+* **Frontend**: HTML5, Tailwind CSS, FontAwesome 6, Chart.js
+* **Typography**: *Plus Jakarta Sans* (Heading) + *Poppins* / *Inter* (Body)
+* **Mapping**: Leaflet GIS with GeoJSON (`peta_desa.geojson`)
+* **Security Subsystem**: Environment variable isolation (`.env`), anti-CSRF tokens, MIME type validation, session fixation mitigation, and defensive HTTP security headers.
+
+---
 
 ## 📂 Project Structure
 
 ```
-jan/
-├── config/             # Database configuration
-├── controllers/        # Business logic for Products, Cart, Auth, etc.
-├── views/              # UI Templates
-│   ├── admin/          # Admin dashboard and management views
-│   ├── mobile/         # Mobile-optimized views (Home, Souvenir)
-│   ├── desktop/        # Desktop views (Fallback/Full experience)
-│   └── layouts/        # Header, Footer, etc.
-├── img/                # Product images and assets
-├── includes/           # Helper functions
-├── index.php           # Main Router
-├── install.php         # Database setup/seeder script
-└── sw.js               # Service Worker for PWA
+├── .docs/                  # Comprehensive technical documentation (9 specs)
+├── api/                    # JSON API endpoints (e.g. scan_ticket.php)
+├── config/                 # Database configuration via PDO and .env
+├── controllers/            # Business logic and request handlers
+├── img/                    # Destination assets, products, and media
+├── includes/               # Helper library (env, csrf, upload, trans, formatting)
+├── views/                  # Presentation layer
+│   ├── admin/              # Admin dashboard, POS, and management views
+│   ├── auth/               # Login and registration templates
+│   ├── desktop/            # Responsive desktop catalog views
+│   ├── layouts/            # Global header, footer, and navigation
+│   ├── mobile/             # Mobile-first views and bottom tab navigation
+│   ├── monitor/            # Dinas Pariwisata monitoring dashboard
+│   └── payment/            # Payment simulation screens
+├── .env.example            # Environment variables template
+├── index.php               # Main front controller and router
+├── setup.php               # Idempotent master database setup runner
+└── sw.js                   # Service worker for PWA
 ```
+
+---
 
 ## ⚙️ Installation & Setup
 
-1.  **Prerequisites**:
-    *   Web Server (Apache/Nginx) - e.g., XAMPP, Laragon.
-    *   PHP 7.4 or higher.
-    *   MySQL Database.
+### 1. Prerequisites
+* PHP 8.1 or higher (with `pdo_mysql` and `fileinfo` enabled)
+* MySQL / MariaDB Server
+* Apache, Nginx, or PHP CLI Development Server
 
-2.  **Setup**:
-    *   Clone or extract this project into your web root directory (e.g., `d:\xampp\htdocs\jan`).
-    *   Open `config/db.php` and configure your database credentials if they differ from the defaults:
-        ```php
-        $host = 'localhost';
-        $dbname = 'jan_tour'; // Ensure this matches your DB name
-        $username = 'root';
-        $password = '';
-        ```
+### 2. Configuration
+Copy the sample environment file to `.env`:
+```bash
+cp .env.example .env
+```
+Update `.env` with your database credentials and secret keys:
+```ini
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=hollynice_ticket_db
+DB_USER=root
+DB_PASS=
+APP_ENV=development
+APP_KEY=your_secure_random_key_here
+API_SECRET_KEY=your_scanner_secret_key_here
+```
 
-3.  **Initialize Database**:
-    *   Open your browser and navigate to the installation script:
-        ```
-        http://localhost/jan/install.php
-        ```
-    *   This script will create the necessary tables (`users`, `products`, `orders`, etc.) and seed default data.
+### 3. Initialize Database
+Execute the master setup runner (creates all 10 tables and seeds initial data):
+```bash
+php setup.php
+```
 
-4.  **Ready to Run**:
-    *   Access the main application:
-        ```
-        http://localhost/jan/
-        ```
+### 4. Run Development Server
+```bash
+php -S localhost:8080
+```
+Open `http://localhost:8080` in your web browser.
 
-## 🔐 Default Credentials
+---
 
-The `install.php` script creates the following default users:
+## 🔐 Default Demo Roles
 
-| Role | Username | Password |
-| :--- | :--- | :--- |
-| **Admin** | `admin` | `admin123` |
-| **Operator** | `operator` | `operator123` |
-| **Customer** | `user` | `user123` |
+The `setup.php` runner creates the following roles for local testing:
 
-> **Note**: Please change these passwords immediately after deployment in a production environment.
+| Role | Username | Password | Purpose |
+|---|---|---|---|
+| **Administrator** | `admin` | `admin123` | Full access to catalog, galleries, and reports |
+| **Operator** | `operator` | `operator123` | On-site counter POS and ticket QR verification |
+| **Customer** | `user` | `user123` | Tourist booking, cart, and payment simulation |
+| **Monitoring** | `dinas` | `password` | Dinas Pariwisata transaction and revenue analytics |
 
-## 📱 Mobile Simulation
+> **Security Notice**: Change all default passwords and secret keys immediately before deploying to a production server.
 
-To view the mobile interface on a desktop browser:
-1.  Open Developer Tools (F12).
-2.  Toggle the Device Toolbar (Ctrl+Shift+M).
-3.  Select a mobile device (e.g., iPhone 12, Pixel 5).
-4.  Refresh the page.
+---
+
+## 📖 Technical Documentation
+
+For detailed technical specifications, refer to the [`.docs/`](./.docs/) directory:
+* [Architecture & Design Pattern](./.docs/architecture.md)
+* [API Specification](./.docs/api-spec.md)
+* [Database Schema & ERD](./.docs/database.md)
+* [Routes & Controller Mapping](./.docs/routes.md)
+* [Dependency Graph](./.docs/dependency-graph.md)
+* [Issues & Bug Resolution Log](./.docs/issues.md)
+* [Quality & Standards Review](./.docs/quality_review.md)
+* [Deployment Guide](./.docs/deployment-guide.md)
+* [Security & Anti-CVE Audit Report](./.docs/security-audit.md)
 
 ---
 *Developed for Banjarnegara Tourism Promotion.*
