@@ -1,15 +1,16 @@
 # APP CONTEXT & SYSTEM SNAPSHOT
 **Project:** Hollynice Ticket System - Banjarnegara  
-**Stack:** Native PHP 8.1+ MVC, MySQL/MariaDB (PDO), Tailwind CSS CDN, FontAwesome, PWA  
+**Stack:** Native PHP 8.2.35 (Anti-CVE Patched), MySQL/MariaDB (PDO), Tailwind CSS CDN, FontAwesome, PWA  
 **Updated:** 2026-11-11  
 
 ---
 
 ## §APP
 - Architecture: Native PHP modular MVC
+- PHP Runtime: PHP 8.2.35 (C:\xampp\php) - Fully patched against CVE-2024-4577
 - Entry Point: `index.php` (Dispatches `?page=...`)
 - Database: `hollynice_ticket_db` (10 tables verified via `setup.php`)
-- Server: PHP Development Server on port 8080 (`http://localhost:8080`)
+- Server: PHP Development Server on port 8080 (`http://localhost:8080`) & Apache2.4 on port 80
 - Security: .env configured, CSRF protection on all forms & delete actions, secure uploads with MIME whitelisting, session fixation mitigation, protected ticket scanner API, defensive HTTP security headers
 
 ## §SECURITY
