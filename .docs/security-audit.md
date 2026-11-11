@@ -17,6 +17,7 @@ Audit keamanan dan penguatan menyeluruh telah selesai diimplementasikan pada bas
 | **SP-002** | A07: Identification & Auth Failures | Session fixation pada autentikasi | ✅ FIXED (`session_regenerate_id(true)`) |
 | **SP-003** | A03: Injection / Unrestricted Upload | Upload file tanpa whitelist MIME & ekstensi (RCE Risk) | ✅ FIXED (`secure_upload_image()` terpadu) |
 | **SP-006** | A01: Broken Access Control | Endpoint API Scanner tiket publik tanpa otentikasi | ✅ FIXED (Operator Session + Bearer API Key) |
+| **SP-014/015** | A07: Identification & Auth Failures | Brute-force & credential stuffing pada login/register tanpa rate limiting bertier | ✅ FIXED (Tiered Rate Limiter: IP & Email/Username via DB `rate_limits`) |
 | **SP-032** | A05: Security Misconfiguration | Kredensial database hardcoded dalam kode | ✅ FIXED (`.env` + `load_env()`) |
 | **A05** | A05: Security Misconfiguration | Missing HTTP Security Headers | ✅ FIXED (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, etc.) |
 
@@ -50,6 +51,20 @@ Audit keamanan dan penguatan menyeluruh telah selesai diimplementasikan pada bas
   - `X-Frame-Options: SAMEORIGIN` (mencegah clickjacking).
   - `X-XSS-Protection: 1; mode=block`.
   - `Referrer-Policy: strict-origin-when-cross-origin`.
+
+### E. [SP-014 / SP-015] Tiered Rate Limiting (IP & Email/Username)
+* **File:** `includes/rate_limiter.php`, `controllers/auth_controller.php`, `views/auth/login.php`, `views/auth/register.php`
+* **[Evidence:]**
+  - **Dimensi Ganda:** Pengecekan multi-tier berbasis Client IP (mencegah distributed stuffing) dan Identifier Akun/Email (mencegah targeted brute-force pada satu akun).
+  - **Eskalasi Bertier Login:**
+    - *Tier 1:* 5 kegagalan dalam 15 menit $\rightarrow$ Cooldown 60 detik (HTTP 429).
+    - *Tier 2:* 10 kegagalan dalam 15 menit $\rightarrow$ Pembatasan sementara 15 menit (HTTP 429).
+    - *Tier 3:* 15 kegagalan dalam 1 jam $\rightarrow$ Penguncian ketat 1 jam (HTTP 429).
+  - **Eskalasi Bertier Register:**
+    - *Email Limit:* Max 3 pendaftaran dalam 15 menit $\rightarrow$ Cooldown 15 menit.
+    - *IP Limit:* Tier 1 (4 per 10m), Tier 2 (10 per 1h), Tier 3 (25 per 24h).
+  - **Penyimpanan Persisten & Fail-safe:** Tabel `rate_limits` dengan auto-initialization dan fallback session/memory. Reset otomatis counter saat otentikasi berhasil.
+  - **Tampilan Interaktif:** Kartu countdown timer JavaScript pada form login dan pendaftaran saat cooldown aktif.
 
 ---
 

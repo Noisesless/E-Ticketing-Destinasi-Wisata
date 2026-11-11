@@ -199,6 +199,25 @@ try {
     )");
     echo "[✓] Table 'pos_transaction_logs' verified." . PHP_EOL;
 
+    // 13. Rate Limits Table (Tiered Rate Limiter: SP-014/SP-015)
+    $pdo->exec("CREATE TABLE IF NOT EXISTS rate_limits (
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        rate_key VARCHAR(191) NOT NULL,
+        action VARCHAR(32) NOT NULL,
+        identifier_type VARCHAR(32) NOT NULL,
+        identifier_value VARCHAR(191) NOT NULL,
+        attempts INT UNSIGNED NOT NULL DEFAULT 1,
+        tier TINYINT UNSIGNED NOT NULL DEFAULT 1,
+        locked_until DATETIME NULL,
+        first_attempt_at DATETIME NOT NULL,
+        last_attempt_at DATETIME NOT NULL,
+        UNIQUE KEY uniq_rate_key (rate_key),
+        INDEX idx_action_id (action, identifier_type, identifier_value),
+        INDEX idx_locked_until (locked_until),
+        INDEX idx_last_attempt (last_attempt_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    echo "[✓] Table 'rate_limits' verified." . PHP_EOL;
+
     // Seed default users if table is empty
     $userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
     if ($userCount == 0) {

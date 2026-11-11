@@ -229,4 +229,18 @@ Detailed gate entry and on-site POS terminal transaction reconciliation.
 * `entry_type` VARCHAR(20)
 * `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 
+### 2.13 `rate_limits`
+Multi-dimensional tiered rate limiting storage (SP-014/SP-015/OWASP A07).
+* `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY
+* `rate_key` VARCHAR(191) NOT NULL UNIQUE
+* `action` VARCHAR(32) NOT NULL ('login', 'register')
+* `identifier_type` VARCHAR(32) NOT NULL ('ip', 'identifier', 'email')
+* `identifier_value` VARCHAR(191) NOT NULL
+* `attempts` INT UNSIGNED NOT NULL DEFAULT 1
+* `tier` TINYINT UNSIGNED NOT NULL DEFAULT 1 (Tier 1..3)
+* `locked_until` DATETIME NULL
+* `first_attempt_at` DATETIME NOT NULL
+* `last_attempt_at` DATETIME NOT NULL
+* Indexes: `uniq_rate_key`, `idx_action_id`, `idx_locked_until`, `idx_last_attempt`
+
 

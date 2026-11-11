@@ -41,6 +41,9 @@ function env($key, $default = null) {
 // Automatically load .env once
 load_env();
 
+// Tiered Rate Limiter Module (SP-014 / SP-015 / OWASP A07)
+require_once __DIR__ . '/rate_limiter.php';
+
 // Environment-aware Error Handling (Anti-Information Disclosure)
 if (env('APP_ENV') === 'production') {
     ini_set('display_errors', '0');
@@ -51,7 +54,7 @@ if (env('APP_ENV') === 'production') {
     error_reporting(E_ALL);
 }
 
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     $current_save_path = session_save_path();
     if (empty($current_save_path) || !is_dir($current_save_path)) {
         if (is_dir('C:/xampp/tmp')) {
