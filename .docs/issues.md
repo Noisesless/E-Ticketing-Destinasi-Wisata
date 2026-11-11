@@ -53,4 +53,16 @@
 | **ISS-007** | Automated Image Thumbnail Generation on Upload | Low | Future Enhancement |
 | **ISS-008** | Real Payment Gateway Integration (Midtrans / Xendit) | Medium | Post-Launch |
 | **ISS-009** | Export Sales Reports to PDF / Excel for Dinas | Low | Operational Feature |
+| **ISS-010** | Parse Error Unmatched '}' in admin_transportation_controller.php | High | Immediate Fix |
+
+---
+
+## 3. Active Incident
+### [ISS-010] Parse Error Unmatched '}' in admin_transportation_controller.php
+* **Severity:** High (PHP Syntax Error)
+* **Symptom:** `Parse error: Unmatched '}' in controllers/admin_transportation_controller.php on line 89`
+* **Root Cause:** Redundant closing brace and duplicate redirect statement at lines 87-88 under `action == 'edit'`.
+* **Resolution:** Removed lines 87-88 so the `elseif ($action == 'edit')` block closes cleanly. Ran syntax lint on all PHP files (0 errors).
+* **Status:** ✅ CLOSED
+
 

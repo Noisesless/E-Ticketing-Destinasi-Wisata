@@ -84,6 +84,4 @@ if ($action == 'list') {
     } else {
         redirect('index.php?page=admin_transportation');
     }
-        redirect('index.php?page=admin_transportation');
-    }
 }
