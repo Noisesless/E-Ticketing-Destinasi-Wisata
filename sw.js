@@ -1,11 +1,11 @@
-const CACHE_NAME = 'hollynice-v1';
+const CACHE_NAME = 'hollynice-v2';
 const urlsToCache = [
   'index.php',
   'manifest.json',
   'img/logo.jpg',
   'https://cdn.tailwindcss.com',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
-  'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap'
+  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap'
 ];
 
 self.addEventListener('install', event => {
