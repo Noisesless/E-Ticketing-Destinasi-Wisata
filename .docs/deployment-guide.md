@@ -1,5 +1,6 @@
 # Deployment & Server Administration Guide
-**Project:** Hollynice Ticket System - Banjarnegara  
+**Project:** Hollynice Ticket System - Geopark Wonosobo  
+**Recommended Runtime:** PHP 8.2.35+ (Thread-Safe x64 on Windows / FPM on Linux)  
 **Updated:** 2026-11-11  
 
 ---

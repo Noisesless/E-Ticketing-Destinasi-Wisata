@@ -1,9 +1,10 @@
 # Security Audit & Hardening Report (Anti-CVE)
-**Project:** Hollynice Ticket System - Banjarnegara  
+**Project:** Hollynice Ticket System - Geopark Wonosobo  
 **Date:** 2026-11-11  
 **Auditor:** Antigravity AI (Vibes Coding Workflow)  
 **Standard:** OWASP Top 10, CWE / CVE Prevention, Brainvibes Security Patterns  
 **UI Framework:** Tailwind CSS (Preserved & Token-Configured)  
+**Runtime:** PHP 8.2.35 (CVE-2024-4577 Patched)  
 
 ---
 

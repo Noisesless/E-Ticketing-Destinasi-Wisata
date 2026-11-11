@@ -1,5 +1,5 @@
 # API Specification & Endpoints
-**Project:** Hollynice Ticket System - Banjarnegara  
+**Project:** Hollynice Ticket System - Geopark Wonosobo  
 **Updated:** 2026-11-11  
 
 ---

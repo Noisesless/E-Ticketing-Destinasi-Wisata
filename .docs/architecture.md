@@ -1,6 +1,6 @@
 # System Architecture & Design Overview
-**Project:** Hollynice Ticket System - Banjarnegara  
-**Stack:** Native PHP 8.1+, MySQL/MariaDB (PDO), Tailwind CSS, PWA  
+**Project:** Hollynice Ticket System - Geopark Wonosobo  
+**Stack:** Native PHP 8.2.35, MySQL/MariaDB (PDO), Tailwind CSS, OpenLayers GIS, TCPDF, PWA  
 **Updated:** 2026-11-11  
 
 ---
@@ -15,9 +15,11 @@ graph TD
     Router -->|2. Load Core Helpers| Helpers[includes/functions.php]
     Router -->|3. Route & Dispatch| Controllers[controllers/*.php]
     Controllers -->|Query Data| DB[(MySQL Database)]
+    Controllers -->|Generate PDF Report| PDFEngine[TCPDF Engine]
     Controllers -->|Render View| Views[views/desktop/ or views/mobile/]
     Views -->|Include Layout| Layout[views/layouts/header.php & footer.php]
-    Views -->|Return HTML| Client
+    Views -->|Load Spatial Layers| Peta[peta/*.geojson]
+    Views -->|Return HTML / Stream PDF| Client
 ```
 
 ---
@@ -30,10 +32,12 @@ graph TD
 | [`config/db.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/config/db.php) | PDO database connection initialized via environment variables (`.env`). |
 | [`includes/functions.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/includes/functions.php) | Core helper library: `.env` loader, CSRF tokens, XSS escaping, secure file upload, session guard, currency formatting, and multi-language translations (`trans()`). |
 | [`controllers/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/controllers/) | Business logic handling data retrieval, authentication, transaction processing, and view orchestration. |
-| [`views/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/views/) | Presentation layer categorized into `desktop/`, `mobile/`, `admin/`, `auth/`, and `layouts/`. |
+| [`views/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/views/) | Presentation layer categorized into `desktop/`, `mobile/`, `admin/`, `auth/`, `monitor/`, and `layouts/`. |
 | [`api/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/api/) | Dedicated JSON API endpoints (e.g. ticket validation). |
-| [`img/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/img/) | Static media assets, tourism photography, and user-uploaded content. |
-| [`setup.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/setup.php) | Unified, idempotent database schema runner and data seeder. |
+| [`img/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/img/) | Static media assets, tourism photography, products (`img/produk/`), and logos. |
+| [`peta/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/peta/) | GeoJSON spatial dataset containing Wonosobo Regency and district boundary polygons. |
+| [`TCPDF/`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/TCPDF/) | Bundled PDF engine powering official PAD monitoring reports for BPPKAD. |
+| [`setup.php`](file:///d:/Project/E-Ticketing-Destinasi-Wisata-main/setup.php) | Unified, idempotent database schema runner and data seeder (12 tables). |
 
 ---
 
