@@ -1,5 +1,5 @@
 <?php
-$orderId = $_GET['order_id'] ?? null;
+$orderId = validate_int($_GET['order_id'] ?? null);
 
 if (!$orderId) {
     // Show all my tickets if no order specified
